@@ -6,8 +6,8 @@ sentence_transformers==2.1.0
 scipy==1.7.1
 tqdm==4.62.2
 gensim==3.8.3
-spacy>=2.2.0,<3.0.0
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz
 plotly
 wordcloud
 matplotlib.pyplot
+spacy>=2.2.0,<3.0.0
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz
