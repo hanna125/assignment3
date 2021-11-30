@@ -1,149 +1,121 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-	
-	
-	@author: Trent Hannack
-	"""
-	
 
-	import spacy
-	from spacy.lang.en.stop_words import STOP_WORDS
-	from string import punctuation
-	from collections import Counter
-	from heapq import nlargest
-	import os
-	import spacy
-	nlp = spacy.load("en_core_web_sm")
-	from spacy import displacy
-	
 
-	from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-	import matplotlib.pyplot as plt
-	
+@author: Trent Hannack
+"""
 
-	st.title("MABA 6490 Assignment 4")
-	
+import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
+from string import punctuation
+from collections import Counter
+from heapq import nlargest
+import os
+import spacy
+nlp = spacy.load("en_core_web_sm")
+from spacy import displacy
 
-	stopwords=list(STOP_WORDS)
-	from string import punctuation
-	punctuation=punctuation+ '\n'
-	
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
 
-	import pandas as pd
-	from sentence_transformers import SentenceTransformer
-	import scipy.spatial
-	import pickle as pkl
-	import os
-	
+st.title("MABA 6490 Assignment 4")
 
-	embedder = SentenceTransformer('all-MiniLM-L6-v2')
-	  
-	df = pd.read_csv('Hotel New York Combined.csv')
-	
+stopwords=list(STOP_WORDS)
+from string import punctuation
+punctuation=punctuation+ '\n'
 
-	df['hotel_name'].value_counts()
-	df['hotel_name'].drop_duplicates()
-	
+import pandas as pd
+from sentence_transformers import SentenceTransformer
+import scipy.spatial
+import pickle as pkl
+import os
 
-	df_combined = df.sort_values(['hotel_name']).groupby('hotel_name', sort=False).review_body.apply(''.join).reset_index(name='all_review')
-	
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
+  
+df = pd.read_csv('Hotel New York Combined.csv')
 
-	import re
-	
+df['hotel_name'].value_counts()
+df['hotel_name'].drop_duplicates()
 
-	df_combined['all_review'] = df_combined['all_review'].apply(lambda x: re.sub('[^a-zA-z0-9\s]','',x))
-	
+df_combined = df.sort_values(['hotel_name']).groupby('hotel_name', sort=False).review_body.apply(''.join).reset_index(name='all_review')
 
-	def lower_case(input_str):
-	    input_str = input_str.lower()
-	    return input_str
-	
+import re
 
-	df_combined['all_review']= df_combined['all_review'].apply(lambda x: lower_case(x))
-	
+df_combined['all_review'] = df_combined['all_review'].apply(lambda x: re.sub('[^a-zA-z0-9\s]','',x))
 
-	df = df_combined
-	
+def lower_case(input_str):
+    input_str = input_str.lower()
+    return input_str
 
-	df_sentences = df_combined.set_index("all_review")
-	
+df_combined['all_review']= df_combined['all_review'].apply(lambda x: lower_case(x))
 
-	df_sentences = df_sentences["hotel_name"].to_dict()
-	df_sentences_list = list(df_sentences.keys())
-	len(df_sentences_list)
-	
+df = df_combined
 
-	list(df_sentences.keys())[:5]
-	
+df_sentences = df_combined.set_index("all_review")
 
-	import pandas as pd
-	from tqdm import tqdm
-	from sentence_transformers import SentenceTransformer, util
-	
+df_sentences = df_sentences["hotel_name"].to_dict()
+df_sentences_list = list(df_sentences.keys())
+len(df_sentences_list)
 
-	df_sentences_list = [str(d) for d in tqdm(df_sentences_list)]
-	
+list(df_sentences.keys())[:5]
 
-	corpus = df_sentences_list
-	corpus_embeddings = embedder.encode(corpus,show_progress_bar=True)
-	
+import pandas as pd
+from tqdm import tqdm
+from sentence_transformers import SentenceTransformer, util
 
-	corpus_embeddings[0]
-	
+df_sentences_list = [str(d) for d in tqdm(df_sentences_list)]
 
-	model = SentenceTransformer('all-MiniLM-L6-v2')
-	paraphrases = util.paraphrase_mining(model, corpus)
-	
+corpus = df_sentences_list
+corpus_embeddings = embedder.encode(corpus,show_progress_bar=True)
 
-	#queries = ['Hotel close to Central Park',
-	           'Hotel with breakfast'
-	           ]
-	
+corpus_embeddings[0]
 
-	# Query sentences:
-	queries = input('What kind of hotel are you looking for?')
-	query_embeddings = embedder.encode(queries,show_progress_bar=True)
-	
+model = SentenceTransformer('all-MiniLM-L6-v2')
+paraphrases = util.paraphrase_mining(model, corpus)
 
-	from sentence_transformers import SentenceTransformer, util
-	import torch
-	embedder = SentenceTransformer('all-MiniLM-L6-v2')
-	
+#queries = ['Hotel close to Central Park',
+           'Hotel with breakfast'
+           ]
 
-	corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
-	
+# Query sentences:
+queries = input('What kind of hotel are you looking for?')
+query_embeddings = embedder.encode(queries,show_progress_bar=True)
 
-	def plot_cloud(wordcloud):
-	    # Set figure size
-	    plt.figure(figsize=(40, 30))
-	    # Display image
-	    plt.imshow(wordcloud) 
-	    # No axis details
-	    plt.axis("off");
-	
+from sentence_transformers import SentenceTransformer, util
+import torch
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
-	# Find the closest 5 sentences of the corpus for each query sentence based on cosine similarity
-	top_k = min(5, len(corpus))
-	for query in queries:
-	    query_embedding = embedder.encode(query, convert_to_tensor=True)
-	
+corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-	    # We use cosine-similarity and torch.topk to find the highest 5 scores
-	    cos_scores = util.pytorch_cos_sim(query_embedding, corpus_embeddings)[0]
-	    top_results = torch.topk(cos_scores, k=top_k)
-	
+def plot_cloud(wordcloud):
+    # Set figure size
+    plt.figure(figsize=(40, 30))
+    # Display image
+    plt.imshow(wordcloud) 
+    # No axis details
+    plt.axis("off");
 
-	    print("\n\n======================\n\n")
-	    print("Query:", query)
-	    print("\nTop 5 most similar sentences in corpus:")
-	
+# Find the closest 5 sentences of the corpus for each query sentence based on cosine similarity
+top_k = min(5, len(corpus))
+for query in queries:
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
 
-	    for score, idx in zip(top_results[0], top_results[1]):
-	        print("(Score: {:.4f})".format(score))
-	        row_dict = df.loc[df['all_review']== corpus[idx]]
-	        print("paper_id:  " , row_dict['hotel_name'] , "\n")
-	        wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
-	        plot_cloud(wordcloud)
-	        plt.imshow(wordcloud, interpolation='bilinear')
-	        plt.axis("off")
-	        plt.show()
-	        print()
+    # We use cosine-similarity and torch.topk to find the highest 5 scores
+    cos_scores = util.pytorch_cos_sim(query_embedding, corpus_embeddings)[0]
+    top_results = torch.topk(cos_scores, k=top_k)
+
+    print("\n\n======================\n\n")
+    print("Query:", query)
+    print("\nTop 5 most similar sentences in corpus:")
+
+    for score, idx in zip(top_results[0], top_results[1]):
+        print("(Score: {:.4f})".format(score))
+        row_dict = df.loc[df['all_review']== corpus[idx]]
+        print("paper_id:  " , row_dict['hotel_name'] , "\n")
+        wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
+        plot_cloud(wordcloud)
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.show()
+        print()
