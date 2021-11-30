@@ -75,8 +75,8 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 paraphrases = util.paraphrase_mining(model, corpus)
 
 #queries = ['Hotel close to Central Park',
-           'Hotel with breakfast'
-           ]
+#           'Hotel with breakfast'
+#           ]
 
 # Query sentences:
 queries = input('What kind of hotel are you looking for?')
