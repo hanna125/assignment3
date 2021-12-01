@@ -12,7 +12,6 @@ from string import punctuation
 from collections import Counter
 from heapq import nlargest
 import os
-import spacy
 nlp = spacy.load("en_core_web_sm")
 from spacy import displacy
 
