@@ -19,7 +19,7 @@ import streamlit as st
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
 
-st.title("MABA 6490 Assignment 4")
+st.title("MABA 6490 Assignment 3")
 
 stopwords=list(STOP_WORDS)
 from string import punctuation
