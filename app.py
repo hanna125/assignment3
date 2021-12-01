@@ -67,7 +67,7 @@ df_sentences_list = [str(d) for d in tqdm(df_sentences_list)]
 corpus = df_sentences_list
 corpus_embeddings = embedder.encode(corpus,show_progress_bar=True)
 
-corpus_embeddings[0]
+#corpus_embeddings[0]
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 paraphrases = util.paraphrase_mining(model, corpus)
