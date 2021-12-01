@@ -109,7 +109,7 @@ for query in queries:
         row_dict = df.loc[df['all_review']== corpus[idx]]
         st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
         wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
-        plot_cloud(wordcloud)
+        #plot_cloud(wordcloud)
         st.pyplot(wordcloud, interpolation='bilinear')
         #st.pyplot.axis("off")
         #st.pyplot.show()
