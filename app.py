@@ -74,7 +74,7 @@ paraphrases = util.paraphrase_mining(model, corpus)
 
 # Query sentences:
 userinput = st.text_input('What kind of hotel are you looking for?')
-queries = str(userinput)
+queries = [str(userinput)]
 query_embeddings = embedder.encode(queries,show_progress_bar=True)
 
 from sentence_transformers import SentenceTransformer, util
@@ -85,11 +85,11 @@ corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
 def plot_cloud(wordcloud):
     # Set figure size
-    plt.figure(figsize=(40, 30))
+    st.pyplot.figure(figsize=(40, 30))
     # Display image
-    plt.imshow(wordcloud) 
+    st.pyplot.imshow(wordcloud) 
     # No axis details
-    plt.axis("off");
+    st.pyplot.axis("off");
 
 # Find the closest 5 sentences of the corpus for each query sentence based on cosine similarity
 top_k = min(5, len(corpus))
@@ -110,7 +110,7 @@ for query in queries:
         st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
         wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
         plot_cloud(wordcloud)
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis("off")
-        plt.show()
+        st.pyplot.imshow(wordcloud, interpolation='bilinear')
+        st.pyplot.axis("off")
+        st.pyplot.show()
         st.write()
