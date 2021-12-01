@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 
 
@@ -15,6 +13,7 @@ import os
 nlp = spacy.load("en_core_web_sm")
 from spacy import displacy
 import streamlit as st
+import matplotlib.pyplot as plt
 
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
@@ -29,10 +28,12 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 import scipy.spatial
 import pickle as pkl
+from sentence_transformers import SentenceTransformer, util
+import torch
 #import os
 
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
-  
+
 df = pd.read_csv('Hotel New York Combined.csv')
 
 df['hotel_name'].drop_duplicates()
@@ -61,39 +62,34 @@ from tqdm import tqdm
 from sentence_transformers import SentenceTransformer, util
 
 df_sentences_list = [str(d) for d in tqdm(df_sentences_list)]
-
+#
 corpus = df_sentences_list
 corpus_embeddings = embedder.encode(corpus,show_progress_bar=True)
-
-model = SentenceTransformer('all-MiniLM-L6-v2')
-paraphrases = util.paraphrase_mining(model, corpus)
+#
+# model = SentenceTransformer('all-MiniLM-L6-v2')
+# paraphrases = util.paraphrase_mining(model, corpus)
 
 #queries = ['Hotel close to Central Park',
 #           'Hotel with breakfast'
 #           ]
 
-# Query sentences:
-userinput = st.text_input('What kind of hotel are you looking for?')
-queries = [str(userinput)]
-query_embeddings = embedder.encode(queries,show_progress_bar=True)
-
-from sentence_transformers import SentenceTransformer, util
-import torch
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
-
-corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
+# Query sentences
 
 def plot_cloud(wordcloud):
     # Set figure size
-    #st.pyplot.figure(figsize=(40, 30))
+    st.pyplot.figure(figsize=(40, 30))
     # Display image
-    st.pyplot(wordcloud) 
+    st.pyplot(wordcloud)
     # No axis details
     #st.pyplot.axis("off");
+userinput = st.text_input('What kind of hotel are you looking for?')
+if not userinput:
+    st.write("Please enter a query to get results")
+else:
+    query = [str(userinput)]
+    # query_embeddings = embedder.encode(queries,show_progress_bar=True)
+    top_k = min(5, len(corpus))
 
-# Find the closest 5 sentences of the corpus for each query sentence based on cosine similarity
-top_k = min(5, len(corpus))
-for query in queries:
     query_embedding = embedder.encode(query, convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
@@ -108,9 +104,11 @@ for query in queries:
         st.write("(Score: {:.4f})".format(score))
         row_dict = df.loc[df['all_review']== corpus[idx]]
         st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
-        wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
-        plot_cloud(wordcloud)
-        st.pyplot(wordcloud)
-        #st.pyplot.axis("off")
-        #st.pyplot.show()
-        st.write()
+        #wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
+        wordcloud = WordCloud().generate(corpus[idx])
+        fig, ax = plt.subplots()
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.show()
+        st.pyplot(fig)
+        st.set_option('deprecation.showPyplotGlobalUse', False)
