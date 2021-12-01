@@ -73,7 +73,8 @@ paraphrases = util.paraphrase_mining(model, corpus)
 #           ]
 
 # Query sentences:
-queries = str(st.text_input('What kind of hotel are you looking for?'))
+userinput = st.text_input('What kind of hotel are you looking for?')
+queries = str(userinput)
 query_embeddings = embedder.encode(queries,show_progress_bar=True)
 
 from sentence_transformers import SentenceTransformer, util
@@ -99,17 +100,17 @@ for query in queries:
     cos_scores = util.pytorch_cos_sim(query_embedding, corpus_embeddings)[0]
     top_results = torch.topk(cos_scores, k=top_k)
 
-    print("\n\n======================\n\n")
-    print("Query:", query)
-    print("\nTop 5 most similar sentences in corpus:")
+    st.write("\n\n======================\n\n")
+    st.write("Query:", query)
+    st.write("\nTop 5 most similar sentences in corpus:")
 
     for score, idx in zip(top_results[0], top_results[1]):
-        print("(Score: {:.4f})".format(score))
+        st.write("(Score: {:.4f})".format(score))
         row_dict = df.loc[df['all_review']== corpus[idx]]
-        print("paper_id:  " , row_dict['hotel_name'] , "\n")
+        st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
         wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
         plot_cloud(wordcloud)
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis("off")
         plt.show()
-        print()
+        st.write()
