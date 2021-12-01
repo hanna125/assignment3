@@ -14,11 +14,12 @@ from heapq import nlargest
 import os
 nlp = spacy.load("en_core_web_sm")
 from spacy import displacy
+import streamlit as st
 
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
 
-#st.title("MABA 6490 Assignment 4")
+st.title("MABA 6490 Assignment 4")
 
 stopwords=list(STOP_WORDS)
 from string import punctuation
@@ -28,13 +29,12 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 import scipy.spatial
 import pickle as pkl
-import os
+#import os
 
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
   
 df = pd.read_csv('Hotel New York Combined.csv')
 
-df['hotel_name'].value_counts()
 df['hotel_name'].drop_duplicates()
 
 df_combined = df.sort_values(['hotel_name']).groupby('hotel_name', sort=False).review_body.apply(''.join).reset_index(name='all_review')
@@ -55,9 +55,8 @@ df_sentences = df_combined.set_index("all_review")
 
 df_sentences = df_sentences["hotel_name"].to_dict()
 df_sentences_list = list(df_sentences.keys())
-len(df_sentences_list)
 
-list(df_sentences.keys())[:5]
+#list(df_sentences.keys())[:5]
 
 import pandas as pd
 from tqdm import tqdm
@@ -78,7 +77,7 @@ paraphrases = util.paraphrase_mining(model, corpus)
 #           ]
 
 # Query sentences:
-queries = input('What kind of hotel are you looking for?')
+queries = str(st.text_input('What kind of hotel are you looking for?'))
 query_embeddings = embedder.encode(queries,show_progress_bar=True)
 
 from sentence_transformers import SentenceTransformer, util
