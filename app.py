@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 st.title("New York City Hotel Recommender")
 
-st.image("nyc.jpeg")
+st.image("nyc.jpg")
 
 stopwords=list(STOP_WORDS)
 from string import punctuation
