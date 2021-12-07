@@ -100,7 +100,7 @@ else:
 
     st.write("\n\n======================\n\n")
     st.write("Query:", query)
-    st.write("\nTop 5 most similar sentences in corpus:")
+    st.write("\nTop 5 hotels that most closely match your description:")
 
     for score, idx in zip(top_results[0], top_results[1]):
         st.write("(Score: {:.4f})".format(score))
