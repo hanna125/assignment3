@@ -99,13 +99,13 @@ else:
     top_results = torch.topk(cos_scores, k=top_k)
 
     st.write("\n\n======================\n\n")
-    st.write("Query:", query)
+    #st.write("Query:", query)
     st.write("\nTop 5 hotels that most closely match your description:")
 
     for score, idx in zip(top_results[0], top_results[1]):
         st.write("(Score: {:.4f})".format(score))
         row_dict = df.loc[df['all_review']== corpus[idx]]
-        #st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
+        st.write(row_dict['hotel_name'] , "\n")
         #wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
         wordcloud = WordCloud().generate(corpus[idx])
         fig, ax = plt.subplots()
