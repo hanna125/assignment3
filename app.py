@@ -18,7 +18,9 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
 
-st.title("MABA 6490 Assignment 3")
+st.title("New York City Hotel Recommender")
+
+st.image("nyc.jpeg")
 
 stopwords=list(STOP_WORDS)
 from string import punctuation
@@ -103,7 +105,7 @@ else:
     for score, idx in zip(top_results[0], top_results[1]):
         st.write("(Score: {:.4f})".format(score))
         row_dict = df.loc[df['all_review']== corpus[idx]]
-        st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
+        #st.write("paper_id:  " , row_dict['hotel_name'] , "\n")
         #wordcloud = WordCloud(width= 3000, height = 2000, random_state=1, background_color='salmon', colormap='Pastel1', collocations=False, stopwords = STOPWORDS).generate(str(corpus[idx]))
         wordcloud = WordCloud().generate(corpus[idx])
         fig, ax = plt.subplots()
